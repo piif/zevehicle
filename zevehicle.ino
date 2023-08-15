@@ -95,17 +95,82 @@ void setup() {
 	Serial.println("setup ok");
 }
 
+unsigned long nextActionTS = 0;
+void nextAction() {
+    stop();
+}
+
+void addAction(word command) {
+    if (command == IR_OK) {
+        stop();
+        nextActionTS = 0;
+        return;
+    }
+    nextActionTS = millis() + 1000;
+    switch(command) {
+        case IR_DIRECTION_UP:
+            left = right = 255;
+            updateSpeed();
+        break;
+        case IR_DIRECTION_DOWN:
+            left = right = -255;
+            updateSpeed();
+        break;
+        case IR_DIRECTION_LEFT:
+            left  = -255;
+            right =  255;
+            updateSpeed();
+        break;
+        case IR_DIRECTION_RIGHT:
+            left  =  255;
+            right = -255;
+            updateSpeed();
+        break;
+    }
+}
+
 DEBUG(unsigned long debugBefore=0);
 void loop() {
 
 	handleInput();
+
+    if (nextActionTS != 0 && millis() > nextActionTS) {
+        nextActionTS = 0;
+        nextAction();
+    }
 
     remoteIR_keyCode irKey = remoteIR_check();
     DEBUG(if (debug != debugBefore) {
         Serial.print("D="); Serial.println(debug, HEX);
         debugBefore = debug;
     })
+
     if (irKey != 0) {
         Serial.print("Pressed "); Serial.println(irKey, HEX);
+        switch (irKey) {
+            case IR_DIRECTION_UP:
+                Serial.println("UP");
+                addAction(irKey);
+            break;
+            case IR_DIRECTION_DOWN:
+                Serial.println("DOWN");
+                addAction(irKey);
+            break;
+            case IR_DIRECTION_LEFT:
+                Serial.println("LEFT");
+                addAction(irKey);
+            break;
+            case IR_DIRECTION_RIGHT:
+                Serial.println("RIGHT");
+                addAction(irKey);
+            break;
+            case IR_OK:
+                Serial.println("OK");
+                addAction(irKey);
+            break;
+            default:
+                Serial.println("Other");
+            break;
+        }
     }
 }

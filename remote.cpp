@@ -21,7 +21,6 @@ volatile unsigned long recordMask = 0;
 volatile unsigned long recordMaskBit = 0;
 volatile unsigned long recordValue= 0;
 DEBUG(volatile unsigned long debug);
-int toto;
 
 volatile unsigned long recordingTimeout = 0;
 
@@ -30,17 +29,16 @@ unsigned long remoteIR_check() {
         recordingTimeout = 0;
         recordState = RECORD_NONE;
         DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
-        return recordValue;
-        // if (recordValue & REMOTE_IR_ERROR_CODE_BASE == REMOTE_IR_ERROR_CODE_BASE) {
-        //     // return error code "as is"
-        //     return recordValue;
-        // } else if (recordValue & IR_PROTO_PREFIX_MASK == IR_PROTO_PREFIX) {
-        //     // if prefix OK, return keycode without prefix
-        //     return recordValue & IR_PROTO_DATA_MASK;
-        // } else {
-        //     // bad prefix
-        //     return REMOTE_IR_ERROR(IR_ERROR_BAD_PREFIX);
-        // }
+        if ((recordValue & REMOTE_IR_ERROR_CODE_BASE) == REMOTE_IR_ERROR_CODE_BASE) {
+            // return error code "as is"
+            return recordValue;
+        } else if ((recordValue & IR_PROTO_PREFIX_MASK) == IR_PROTO_PREFIX) {
+            // if prefix OK, return keycode without prefix
+            return recordValue & IR_PROTO_DATA_MASK;
+        } else {
+            // bad prefix
+            return REMOTE_IR_ERROR(IR_ERROR_BAD_PREFIX);
+        }
     }
     if (recordingTimeout != 0 && micros() > recordingTimeout) {
         recordingTimeout = 0;
