@@ -11,4 +11,4 @@ ARDDUDE_OPTIONS := -l cr -o raw -d
 PORT := /dev/ttyUSB0
 
 ARDUINO_CLI_UPLOAD_OPTS=-v
-ARDUINO_CLI_COMPILE_OPTS=--build-property "build.extra_flags=-DREDUCED_MAP"
+ARDUINO_CLI_COMPILE_OPTS=--warnings all --build-property "build.extra_flags=-DREDUCED_MAP -DIR_REMOTE_NETGEM"
