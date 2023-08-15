@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include "serialInput.h"
+
 #include "remote.h"
 
 #ifndef DEFAULT_BAUDRATE
@@ -15,11 +16,6 @@
 #define MOTOR_RIGHT_B  10
 
 int left = 0, right = 0;
-
-volatile word irKey = 0;
-void callback(word key) {
-    irKey = key;
-}
 
 void updateSpeed() {
     if (left == 0) {
@@ -93,23 +89,23 @@ void setup() {
 
     updateSpeed();
 
-    setupIR();
+    remoteIR_Setup();
 
 	registerInput(sizeof(inputs), inputs);
 	Serial.println("setup ok");
 }
 
+DEBUG(unsigned long debugBefore=0);
 void loop() {
+
 	handleInput();
 
-    if (recordingTimeout != 0 && micros() > recordingTimeout) {
-        recordingTimeout = 0;
-        irKey = 99;
-    }
-
+    remoteIR_keyCode irKey = remoteIR_check();
+    DEBUG(if (debug != debugBefore) {
+        Serial.print("D="); Serial.println(debug, HEX);
+        debugBefore = debug;
+    })
     if (irKey != 0) {
         Serial.print("Pressed "); Serial.println(irKey, HEX);
-        irKey = 0;
-        dumpIRbuffer();
     }
 }

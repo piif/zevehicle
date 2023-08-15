@@ -1,112 +1,147 @@
-#define REMOTE_CPP
 #include "remote.h"
 
-#define MAX_FRAME_LEN 2
-volatile unsigned long recBufferTime[MAX_FRAME_LEN] = { 0, };
-volatile int recBufferSize = 0;
-volatile unsigned long recordingTimeout = 0;
-volatile unsigned long recordingTimestamp = 0;
-
-volatile enum {
-    NOT_RECORDING,
-    WAITING_HEADER,
-    READING_PREFIX,
-    READING_KEY
-} recordingStatus = NOT_RECORDING;
-volatile word recordingBit = 0;
-volatile word recordingValue = 0;
-volatile word recordingPrefix = 0;
-
-#define MARGIN 100
 bool near(unsigned long value, unsigned long reference) {
-    return ((value > reference - MARGIN) && (value < reference + MARGIN));
+    return ((value > reference - IR_PROTO_MARGIN) && (value < reference + IR_PROTO_MARGIN));
 }
 
-word interpretResult(byte state, unsigned long now) {
-    if (recordingStatus == NOT_RECORDING) {
-        // first call -> reset buffer
-        recBufferSize = 0;
-        recordingTimestamp = now;
-        recordingStatus = WAITING_HEADER;
-        return 0;
-    }
-    
-	if (recBufferSize < MAX_FRAME_LEN) {
-		recordingTimeout = now + 100000;
-        if (recBufferSize & 1 == state) {
-            // buffer[0] must store a 0->1 change delay and buffer[1] a 1->1 change delay
-            // thus index must be negation of state
-            // signal error
-            return 0xFFFF;
-        }
-		recBufferTime[recBufferSize] = now - recordingTimestamp; // store elapsed time since previous state change
-		recBufferSize++;
-        recordingTimestamp = now;
-	}
+#define REMOTE_IR_ERROR_CODE_BASE 0xFFF00000
+#define REMOTE_IR_ERROR(n) (REMOTE_IR_ERROR_CODE_BASE | ((n)<<16))
 
-    if (recBufferSize == MAX_FRAME_LEN) {
-        recBufferSize = 0;
-        // interpret 2 durations
-        if (recordingStatus == WAITING_HEADER) {
-            if (near(recBufferTime[0], 9000) && near(recBufferTime[0], 4400)) {
-                recordingStatus = READING_PREFIX;
-                recordingBit = 0x8000;
-                recordingValue = 0;
-            } else {
-                return 0xFFFE;
-            }
-        } else {
-            if (!near(recBufferTime[0], 630)) {
-                return 0xFFFD;
-            }
-            if (near(recBufferTime[1], 1600)) {
-                recordingValue |= recordingBit;
-            } else if (!near(recBufferTime[1], 500)) {
-                return 0xFFFC;
-            }
-            if (recordingBit == 1) {
-                if(recordingStatus == READING_PREFIX) {
-                    recordingPrefix = recordingValue;
-                    recordingBit = 0x8000;
-                    recordingValue = 0;
-                } else {
-                    if (recordingValue == 0) {
-                        return 0xFFFB;
-                    }
-                    return recordingValue;
-                }
-            }
-            recordingBit >>= 1;
-        }
+// signal is high by default -> RECORD_NONE
+// when interrupt is called for first time, it's because signal change from high to low
+// thus, it's low and we must wait it becomes high again -> RECORD_WAIT_HIGH
+// then, it becomes high and we are waiting to pass low again -> RECORD_WAIT_LOW
+// when last bit is received, we just passed low during "trail", we are wxaiting trail end -> RECORD_WAIT_TRAIL
+// finaly, signal go back to default, record ends -> RECORD_END
+// next call to check function will return decoded value and set back to RECORD_NONE
+enum { RECORD_NONE, RECORD_WAIT_HIGH, RECORD_WAIT_LOW,  RECORD_WAIT_TRAIL, RECORD_END } recordState = RECORD_NONE;
+
+// 0 = waiting for prefix, 1<<(IR_PROTO_FRAME_LEN-1) -> 1 = waiting next bit
+volatile unsigned long recordMask = 0;
+volatile unsigned long recordMaskBit = 0;
+volatile unsigned long recordValue= 0;
+DEBUG(volatile unsigned long debug);
+int toto;
+
+volatile unsigned long recordingTimeout = 0;
+
+unsigned long remoteIR_check() {
+    if (recordState == RECORD_END) {
+        recordingTimeout = 0;
+        recordState = RECORD_NONE;
+        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
+        return recordValue;
+        // if (recordValue & REMOTE_IR_ERROR_CODE_BASE == REMOTE_IR_ERROR_CODE_BASE) {
+        //     // return error code "as is"
+        //     return recordValue;
+        // } else if (recordValue & IR_PROTO_PREFIX_MASK == IR_PROTO_PREFIX) {
+        //     // if prefix OK, return keycode without prefix
+        //     return recordValue & IR_PROTO_DATA_MASK;
+        // } else {
+        //     // bad prefix
+        //     return REMOTE_IR_ERROR(IR_ERROR_BAD_PREFIX);
+        // }
     }
+    if (recordingTimeout != 0 && micros() > recordingTimeout) {
+        recordingTimeout = 0;
+        recordState = RECORD_NONE;
+        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
+        return REMOTE_IR_ERROR(IR_ERROR_TIMEOUT) | (recordValue & 0xFFFF);
+    }
+    return 0;
 }
+
+volatile unsigned long timeLow, timeHigh;
 
 void recordInterruptHandler() {
     byte state = digitalRead(RECORD_INPUT);
-    digitalWrite(13, state);
-    unsigned long now = micros();
+    digitalWrite(13, !state);
 
-    word result = interpretResult(state, now);
-    if (result != 0) {
-        recordingStatus = NOT_RECORDING;
-        callback(result);
+    unsigned long now = micros();
+    recordingTimeout = now + IR_MAX_DELAY;
+
+    DEBUG(debug = (debug & 0xFFFFF0FF) | (recordState<<8));
+
+    if (recordState == RECORD_WAIT_TRAIL) {
+        // trail received, that's the end
+        recordState = RECORD_END;
+        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
+        return;
+    }
+
+    if (recordState == RECORD_NONE /*|| recordState == RECORD_END*/) {
+        // new frame, just store timestamp for next iteration
+        // if we are in RECORD_END state, that means check function was not called before next frame begin
+        // => previous frame is skipped (or we should ignore following ones ?)
+        timeLow = now;
+        recordState = RECORD_WAIT_HIGH;
+        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
+        return;
+    }
+    if (recordState == RECORD_WAIT_HIGH) {
+        timeLow = now - timeLow;
+        timeHigh = now;
+        recordState = RECORD_WAIT_LOW;
+        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
+        return;
+    }
+    if (recordState == RECORD_WAIT_LOW) {
+        timeHigh = now - timeHigh;
+
+        // received a top -> interpret signal length
+        if (recordMask==0) {
+            // waiting for header
+            if (near(timeLow, IR_PROTO_HLOW) && near(timeHigh, IR_PROTO_HHIGH)) {
+                recordMask  = 1L<<(IR_PROTO_FRAME_LEN-1);
+                recordMaskBit = IR_PROTO_FRAME_LEN-1;
+                DEBUG(debug = (debug & 0xFFFFFF00) | recordMaskBit);
+                recordValue = 0;
+            } else if (near(timeLow, IR_PROTO_RLOW) && near(timeHigh, IR_PROTO_RHIGH)) {
+                // convention : repeat key = prefix + key code ffff
+                recordValue = IR_PROTO_PREFIX | IR_PROTO_DATA_MASK; 
+                timeLow = now;
+                recordState = RECORD_WAIT_TRAIL;
+                DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
+                return;
+            } else {
+                recordValue = REMOTE_IR_ERROR(IR_ERROR_BAD_HEADER);
+                recordMask  = 0;
+                DEBUG(debug = (debug & 0xFFFF0F00) | (recordState<<12));
+                recordState = RECORD_END;
+            }
+        } else {
+            if (near(timeLow, IR_PROTO_1LOW) && near(timeHigh, IR_PROTO_1HIGH)) {
+                recordValue |= recordMask;
+            } else if (!near(timeLow, IR_PROTO_0LOW) || !near(timeHigh, IR_PROTO_0HIGH)) {
+                recordValue = REMOTE_IR_ERROR(IR_ERROR_BAD_BIT);
+                recordMask = 0;
+                recordState = RECORD_END;
+                DEBUG(debug = (debug & 0xFFFF0F00) | (recordState<<12));
+                return;
+            }
+            recordMask >>= 1;
+            recordMaskBit--;
+            DEBUG(debug = (debug & 0xFFFFFF00) | (recordMaskBit & 0xFF));
+            if (recordMask == 0) {
+                // all bits interpreted, send result.
+                timeLow = now;
+                recordState = RECORD_WAIT_TRAIL;
+                DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
+                return;
+            }
+        }
+
+        timeLow = now;
+        recordState = RECORD_WAIT_HIGH;
+        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
+        return;
     }
 }
 
-void setupIR() {
+void remoteIR_Setup() {
     Serial.println("setupIR");
     pinMode(RECORD_INPUT, INPUT);
     pinMode(13, OUTPUT);
     digitalWrite(13, 0);
 	attachInterrupt(RECORD_INTR, recordInterruptHandler, CHANGE);
-}
-
-void dumpIRbuffer() {
-    Serial.print(recordingPrefix, HEX);Serial.print(' / ');Serial.println(recordingValue, HEX);
-    // Serial.print(recBufferValue[0]);Serial.print(':');Serial.print(0);Serial.print('\t');
-    // for(int i=1; i<recBufferSize; i++) {
-    //     Serial.print(recBufferValue[i]);Serial.print(':');
-    //     Serial.print(recBufferTime[i]-recBufferTime[i-1]);
-    //     Serial.print(i%10 == 9 ? '\n' : '\t');
-    // }
 }
