@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="wheels.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="6.0150393"
+     inkscape:cx="36.90749"
+     inkscape:cy="40.731239"
+     inkscape:window-width="1920"
+     inkscape:window-height="1029"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid824"
+       units="mm"
+       spacingx="5"
+       spacingy="5" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="fill:none;stroke:#000000;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none;stop-color:#000000;stroke-opacity:1"
+       id="path848"
+       cx="10"
+       cy="10"
+       r="6.8384619" />
+    <circle
+       style="fill:none;stroke:#000000;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       id="path974"
+       sodipodi:type="arc"
+       sodipodi:cx="10"
+       sodipodi:cy="10"
+       sodipodi:rx="2.5973783"
+       sodipodi:ry="2.5973783"
+       sodipodi:start="2.3995147"
+       sodipodi:end="3.8780713"
+       sodipodi:arc-type="arc"
+       d="m 8.0855613,11.755363 a 2.5973783,2.5973783 0 0 1 -0.0098,-3.4999787"
+       sodipodi:open="true" />
+    <circle
+       style="fill:none;stroke:#000000;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       id="path974-5"
+       sodipodi:type="arc"
+       sodipodi:cx="10"
+       sodipodi:cy="10"
+       sodipodi:rx="2.5973783"
+       sodipodi:ry="2.5973783"
+       sodipodi:start="2.3995147"
+       sodipodi:end="3.8780713"
+       sodipodi:arc-type="arc"
+       sodipodi:open="true"
+       d="m 8.0855613,11.755363 a 2.5973783,2.5973783 0 0 1 -0.0098,-3.4999787" />
+    <circle
+       style="fill:none;stroke:#000000;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       id="path974-5-9"
+       sodipodi:type="arc"
+       sodipodi:cx="-9.9732771"
+       sodipodi:cy="10"
+       sodipodi:rx="2.5973783"
+       sodipodi:ry="2.5973783"
+       sodipodi:start="2.3995147"
+       sodipodi:end="3.8780713"
+       sodipodi:arc-type="arc"
+       sodipodi:open="true"
+       d="m -11.887716,11.755363 a 2.5973783,2.5973783 0 0 1 -0.0098,-3.4999787"
+       transform="scale(-1,1)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.01;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 8.0657689,8.2569824 H 11.907923"
+       id="path1188"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.01;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 8.0657689,11.756277 H 11.907923"
+       id="path1188-1"
+       sodipodi:nodetypes="cc" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       id="rect2872"
+       width="1.0526582"
+       height="1.999974"
+       x="9.473671"
+       y="4.0110097" />
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:0.01;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       id="rect2872-4"
+       width="1.0526582"
+       height="1.999974"
+       x="9.473671"
+       y="14.011009" />
+  </g>
+</svg>

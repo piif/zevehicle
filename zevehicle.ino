@@ -2,6 +2,7 @@
 #include "serialInput.h"
 
 #include "remote.h"
+#include "wheel.h"
 
 #ifndef DEFAULT_BAUDRATE
 	#define DEFAULT_BAUDRATE 115200
@@ -91,6 +92,8 @@ void setup() {
 
     remoteIR_Setup();
 
+    wheel_setup();
+
 	registerInput(sizeof(inputs), inputs);
 	Serial.println("setup ok");
 }
@@ -173,4 +176,5 @@ void loop() {
             break;
         }
     }
+    wheel_update();
 }
