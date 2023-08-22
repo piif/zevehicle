@@ -7,7 +7,7 @@
    viewBox="0 0 210 297"
    version="1.1"
    id="svg5"
-   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
    sodipodi:docname="IR_protocol.svg"
    inkscape:export-filename="/home/pif/GitHub/piif/zevehicle/doc/IR_protocol.png"
    inkscape:export-xdpi="96"
@@ -26,13 +26,13 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="1.5037598"
-     inkscape:cx="200.49744"
-     inkscape:cy="196.17495"
-     inkscape:window-width="1920"
-     inkscape:window-height="1029"
-     inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:zoom="1.0633188"
+     inkscape:cx="425.55442"
+     inkscape:cy="213.95278"
+     inkscape:window-width="4300"
+     inkscape:window-height="1721"
+     inkscape:window-x="2391"
+     inkscape:window-y="-454"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1">
     <inkscape:grid
@@ -307,6 +307,20 @@
          d="M 0,0 5,-5 -12.5,0 5,5 Z"
          id="path45374-5-59" />
     </marker>
+    <marker
+       style="overflow:visible"
+       id="marker57020-6"
+       refX="0"
+       refY="0"
+       orient="auto"
+       inkscape:stockid="Arrow2Mend"
+       inkscape:isstock="true">
+      <path
+         transform="scale(-0.6)"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.625;stroke-linejoin:round"
+         id="path57018-7" />
+    </marker>
   </defs>
   <g
      inkscape:label="Calque 1"
@@ -341,6 +355,14 @@
        d="M 7.9375006,34.395833 H 25.135417 V 22.489582 h 1.322916 V 34.395833 H 27.78125 V 22.489582 h 1.322917 v 11.906251 h 1.322916 V 22.489582 H 31.75 v 11.906251 h 1.322917 V 22.489582 h 1.322916 V 34.395833 H 35.71875 V 22.489582 h 1.322917 v 11.906251 h 1.322916 V 22.489582 H 39.6875 v 11.906251 h 1.322917 V 22.489582 h 1.322916 V 34.395833 H 43.65625 V 22.489582 h 1.322917 V 34.395833 H 58.208333 V 22.489582 h 1.322917 v 11.906251 h 1.322917 V 22.489582 h 1.322916 V 34.395833 H 75.40625 V 22.489582 h 1.322916 v 11.906251 h 1.322917 V 22.489582 H 79.375 v 11.906251 h 5.291666 V 22.489582 h 1.322917 V 34.395833 H 87.3125 V 22.489582 h 1.322916 v 11.906251 h 17.197924"
        id="path972"
        sodipodi:nodetypes="cccccccccccccccccccccccccccccccccccccccccccccccccccccccccc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 18.520833,121.70833 h 6.614583 v -11.90625 h 0.793751 c 0,3.96875 4e-6,9.50734 0,11.90625 h 2.381249 v -11.90625 h 0.79375 v 11.90625 H 39.6875 v -11.90625 h 3.96875 v 11.90625 h 10.583333 v -11.90625 h 0.793751 v 11.90625 h 2.38125 v -11.90625 h 0.793749 v 11.90625 h 10.583334 v -11.90625 h 0.793749 v 11.90625 h 2.381251 V 109.80208 H 84.1375 v 11.90625 h 2.381251 V 109.80208 H 87.3125 v 11.90625 h 9.260417"
+       id="path972-6"
+       sodipodi:nodetypes="cccccccccccccccccccccccccccccccccc"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m 7.9375,54.239588 h 17.197917 v 11.90625 l 19.84375,10e-7 V 54.239588 l 13.229166,-6e-6 v 11.906251 h 3.96875 V 54.239582 H 75.40625 V 66.145833 H 79.375 V 54.239582 h 5.291666 v 11.906251 h 3.96875 V 54.239582 h 17.197924"
@@ -440,7 +462,7 @@
        id="text48580"><tspan
          sodipodi:role="line"
          id="tspan48578"
-         style="stroke-width:0.264583"></tspan></text>
+         style="stroke-width:0.264583" /></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
        d="m 25.135417,60.854167 h 19.84375"
@@ -561,5 +583,111 @@
          style="stroke-width:0.264583"
          x="87.247421"
          y="83.310204">Fin</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
+       d="M 25.664583,124.35417 H 28.575"
+       id="path3713"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
+       d="M 29.104166,124.35417 H 39.6875"
+       id="path3715"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
+       d="m 24.870835,105.83335 h -2.645834 6.614584 -2.645834"
+       id="path3752"
+       sodipodi:nodetypes="cccc"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="18.152483"
+       y="103.35751"
+       id="text6382"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan6380"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.264583"
+         x="18.152483"
+         y="103.35751">2.5µs</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="18.417065"
+       y="129.81587"
+       id="text6382-4"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan6380-5"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.264583"
+         x="18.417065"
+         y="129.81587">25µs</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="31.679373"
+       y="129.81587"
+       id="text6382-4-5"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan6380-5-1"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52778px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.264583"
+         x="31.679373"
+         y="129.81587">175µs</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker57020)"
+       d="m 46.302083,101.86458 -3.96875,6.61459"
+       id="path14564"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker57020-6)"
+       d="m 86.783336,101.86458 -3.96875,6.61459"
+       id="path14564-7"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';stroke-width:0.264583"
+       x="47.625"
+       y="103.1875"
+       id="text25530"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan25528"
+         style="stroke-width:0.264583"
+         x="47.625"
+         y="103.1875">déplacement bas</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.52777px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';stroke-width:0.264583"
+       x="88.106255"
+       y="103.1875"
+       id="text26854"
+       inkscape:export-filename="C:\Users\fr20311\Downloads\molette.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96"><tspan
+         sodipodi:role="line"
+         id="tspan26852"
+         style="stroke-width:0.264583"
+         x="88.106255"
+         y="103.1875">déplacement haut</tspan></text>
   </g>
 </svg>
