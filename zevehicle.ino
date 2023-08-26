@@ -16,31 +16,56 @@
 #define MOTOR_RIGHT_A   9
 #define MOTOR_RIGHT_B  10
 
+#define INVERTED_WHEELS
+
 int left = 0, right = 0;
 
 void updateSpeed() {
     if (left == 0) {
         digitalWrite(MOTOR_LEFT_EN,  0);
     } else if(left > 0) {
+#ifdef INVERTED_WHEELS
+        analogWrite( MOTOR_LEFT_A,  0);
+        digitalWrite(MOTOR_LEFT_B,  left);
+        digitalWrite(MOTOR_LEFT_EN, 1);
+#else
         analogWrite( MOTOR_LEFT_A,  left);
         digitalWrite(MOTOR_LEFT_B,  0);
         digitalWrite(MOTOR_LEFT_EN, 1);
+#endif // INVERTED_WHEELS
     } else  { // < 0
+#ifdef INVERTED_WHEELS
+        digitalWrite(MOTOR_LEFT_A,  -left);
+        analogWrite( MOTOR_LEFT_B,  0);
+        digitalWrite(MOTOR_LEFT_EN, 1);
+#else
         digitalWrite(MOTOR_LEFT_A,  0);
         analogWrite( MOTOR_LEFT_B,  -left);
         digitalWrite(MOTOR_LEFT_EN, 1);
+#endif // INVERTED_WHEELS
     }
-
     if (right == 0) {
         digitalWrite(MOTOR_RIGHT_EN,  0);
     } else if(right > 0) {
+#ifdef INVERTED_WHEELS
+        analogWrite( MOTOR_RIGHT_A,  0);
+        digitalWrite(MOTOR_RIGHT_B,  right);
+        digitalWrite(MOTOR_RIGHT_EN, 1);
+#else
         analogWrite( MOTOR_RIGHT_A,  right);
         digitalWrite(MOTOR_RIGHT_B,  0);
         digitalWrite(MOTOR_RIGHT_EN, 1);
+#endif // INVERTED_WHEELS
     } else  { // < 0
+#ifdef INVERTED_WHEELS
+        digitalWrite(MOTOR_RIGHT_A,  -right);
+        analogWrite( MOTOR_RIGHT_B,  0);
+        digitalWrite(MOTOR_RIGHT_EN, 1);
+#else
         digitalWrite(MOTOR_RIGHT_A,  0);
         analogWrite( MOTOR_RIGHT_B,  -right);
         digitalWrite(MOTOR_RIGHT_EN, 1);
+#endif // INVERTED_WHEELS
     }
 }
 
