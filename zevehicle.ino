@@ -2,204 +2,134 @@
 #include "serialInput.h"
 
 #include "remote.h"
-#include "wheel.h"
+#include "stepper.h"
 
 #ifndef DEFAULT_BAUDRATE
 	#define DEFAULT_BAUDRATE 115200
 #endif
 
-#define MOTOR_LEFT_EN   4
-#define MOTOR_LEFT_A    5
-#define MOTOR_LEFT_B    6
+#define ENABLE_STEPPERS 3
 
-#define MOTOR_RIGHT_EN  8
-#define MOTOR_RIGHT_A   9
-#define MOTOR_RIGHT_B  10
+Stepper left = {
+    { 4, 5, 6, 7 }, 0, 0, 0
+};
+Stepper right = {
+    { 8, 9, 10, 11 }, 0, 0, 0
+};
 
-#define INVERTED_WHEELS
+int stepsLen = 5;
+int nbSteps = 0;
+int speed = 1000;
+char direction = 'S';
 
-int left = 0, right = 0;
+void setHalf() {
+    stepper_setHalf(&left,  1);
+    stepper_setHalf(&right, 1);
+}
+void setFull() {
+    stepper_setHalf(&left,  0);
+    stepper_setHalf(&right, 0);
+}
 
-void updateSpeed() {
-    if (left == 0) {
-        digitalWrite(MOTOR_LEFT_EN,  0);
-    } else if(left > 0) {
-#ifdef INVERTED_WHEELS
-        analogWrite( MOTOR_LEFT_A,  0);
-        digitalWrite(MOTOR_LEFT_B,  left);
-        digitalWrite(MOTOR_LEFT_EN, 1);
-#else
-        analogWrite( MOTOR_LEFT_A,  left);
-        digitalWrite(MOTOR_LEFT_B,  0);
-        digitalWrite(MOTOR_LEFT_EN, 1);
-#endif // INVERTED_WHEELS
-    } else  { // < 0
-#ifdef INVERTED_WHEELS
-        digitalWrite(MOTOR_LEFT_A,  -left);
-        analogWrite( MOTOR_LEFT_B,  0);
-        digitalWrite(MOTOR_LEFT_EN, 1);
-#else
-        digitalWrite(MOTOR_LEFT_A,  0);
-        analogWrite( MOTOR_LEFT_B,  -left);
-        digitalWrite(MOTOR_LEFT_EN, 1);
-#endif // INVERTED_WHEELS
-    }
-    if (right == 0) {
-        digitalWrite(MOTOR_RIGHT_EN,  0);
-    } else if(right > 0) {
-#ifdef INVERTED_WHEELS
-        analogWrite( MOTOR_RIGHT_A,  0);
-        digitalWrite(MOTOR_RIGHT_B,  right);
-        digitalWrite(MOTOR_RIGHT_EN, 1);
-#else
-        analogWrite( MOTOR_RIGHT_A,  right);
-        digitalWrite(MOTOR_RIGHT_B,  0);
-        digitalWrite(MOTOR_RIGHT_EN, 1);
-#endif // INVERTED_WHEELS
-    } else  { // < 0
-#ifdef INVERTED_WHEELS
-        digitalWrite(MOTOR_RIGHT_A,  -right);
-        analogWrite( MOTOR_RIGHT_B,  0);
-        digitalWrite(MOTOR_RIGHT_EN, 1);
-#else
-        digitalWrite(MOTOR_RIGHT_A,  0);
-        analogWrite( MOTOR_RIGHT_B,  -right);
-        digitalWrite(MOTOR_RIGHT_EN, 1);
-#endif // INVERTED_WHEELS
-    }
+void stop() {
+    nbSteps = 0;
+    digitalWrite(ENABLE_STEPPERS, 0);
+}
+
+void start() {
+    nbSteps = stepsLen;
+    digitalWrite(ENABLE_STEPPERS, 1);
+}
+
+void motorState() {
+	Serial.print("left  ");  Serial.print(left.clockwise);
+    Serial.print(" / ");     Serial.println(left.step);
+	Serial.print("right ");  Serial.print(right.clockwise);
+    Serial.print(" / ");     Serial.println(right.step);
+    Serial.print("remains ");Serial.print(nbSteps);
+    Serial.print(" at ");    Serial.println(speed  );
 }
 
 void status() {
 	Serial.println("Commands :");
 	Serial.println("? : status");
-	Serial.println("l: set left motor speed");
-	Serial.println("r: set rightt motor speed");
-	Serial.println("z: stop all motors");
-	Serial.print("current speed = ");
-	Serial.print(left);
-	Serial.print(" / ");
-	Serial.println(right);
+	Serial.println("d: set direction F (forward) B (backward) L (left) R (right) S (stop)");
+	Serial.println("s: set speed (ms between steps)");
+	Serial.println("l: set how many steps to do");
+	Serial.println("h/f: set half/full");
+
+    motorState();
 }
 
-void stop() {
-    left = right = 0;
-    updateSpeed();
-}
-
-void setLeft(int speed) {
-    left = speed;
-    updateSpeed();
-}
-
-void setRight(int speed) {
-    right = speed;
-    updateSpeed();
+void setDirection(char *d) {
+    direction = d[0];
+    switch(d[0]) {
+        case 'f':
+        case 'F':
+            left.clockwise  = 1;
+            right.clockwise = 1;
+            start();
+            break;
+        case 'b':
+        case 'B':
+            left.clockwise  = 0;
+            right.clockwise = 0;
+            start();
+            break;
+        case 'l':
+        case 'L':
+            left.clockwise  = 0;
+            right.clockwise = 1;
+            start();
+            break;
+        case 'r':
+        case 'R':
+            left.clockwise  = 1;
+            right.clockwise = 0;
+            start();
+            break;
+        case 's':
+        case 'S':
+            stop();
+        break;
+    }
 }
 
 InputItem inputs[] = {
-	{ '?', 'f', (void *)status   },
-	{ 'l', 'I', (void *)setLeft  },
-	{ 'r', 'I', (void *)setRight },
-	{ 'z', 'f', (void *)stop     },
+	{ '?', 'f', (void *)status       },
+	{ 'l', 'i', (void *)&stepsLen    },
+	{ 's', 'i', (void *)&speed       },
+	{ 'd', 'S', (void *)setDirection },
+	{ 'f', 'f', (void *)setFull      },
+	{ 'h', 'f', (void *)setHalf      }
 };
 
 void setup() {
 	Serial.begin(DEFAULT_BAUDRATE);
 
-    pinMode(MOTOR_LEFT_EN,  OUTPUT);
-    pinMode(MOTOR_LEFT_A,   OUTPUT);
-    pinMode(MOTOR_LEFT_B,   OUTPUT);
-    pinMode(MOTOR_RIGHT_EN, OUTPUT);
-    pinMode(MOTOR_RIGHT_A,  OUTPUT);
-    pinMode(MOTOR_RIGHT_B,  OUTPUT);
-
-    updateSpeed();
+    pinMode(ENABLE_STEPPERS, OUTPUT);
+    digitalWrite(ENABLE_STEPPERS, 0);
+    stepper_setup(&left);
+    stepper_setup(&right);
 
     remoteIR_Setup();
-
-    wheel_setup();
 
 	registerInput(sizeof(inputs), inputs);
 	Serial.println("setup ok");
 }
 
-unsigned long nextActionTS = 0;
-void nextAction() {
-    stop();
-}
-
-void addAction(word command) {
-    if (command == IR_OK) {
-        stop();
-        nextActionTS = 0;
-        return;
-    }
-    nextActionTS = millis() + 1000;
-    switch(command) {
-        case IR_DIRECTION_UP:
-            left = right = 255;
-            updateSpeed();
-        break;
-        case IR_DIRECTION_DOWN:
-            left = right = -255;
-            updateSpeed();
-        break;
-        case IR_DIRECTION_LEFT:
-            left  = -255;
-            right =  255;
-            updateSpeed();
-        break;
-        case IR_DIRECTION_RIGHT:
-            left  =  255;
-            right = -255;
-            updateSpeed();
-        break;
-    }
-}
-
-DEBUG(unsigned long debugBefore=0);
 void loop() {
 
 	handleInput();
 
-    if (nextActionTS != 0 && millis() > nextActionTS) {
-        nextActionTS = 0;
-        nextAction();
-    }
-
-    remoteIR_keyCode irKey = remoteIR_check();
-    DEBUG(if (debug != debugBefore) {
-        Serial.print("D="); Serial.println(debug, HEX);
-        debugBefore = debug;
-    })
-
-    if (irKey != 0) {
-        Serial.print("Pressed "); Serial.println(irKey, HEX);
-        switch (irKey) {
-            case IR_DIRECTION_UP:
-                Serial.println("UP");
-                addAction(irKey);
-            break;
-            case IR_DIRECTION_DOWN:
-                Serial.println("DOWN");
-                addAction(irKey);
-            break;
-            case IR_DIRECTION_LEFT:
-                Serial.println("LEFT");
-                addAction(irKey);
-            break;
-            case IR_DIRECTION_RIGHT:
-                Serial.println("RIGHT");
-                addAction(irKey);
-            break;
-            case IR_OK:
-                Serial.println("OK");
-                addAction(irKey);
-            break;
-            default:
-                Serial.println("Other");
-            break;
+    if (nbSteps != 0) {
+        nbSteps--;
+        stepper_doStep(&left);
+        stepper_doStep(&right);
+        motorState();
+        delay(speed);
+        if (nbSteps == 0) {
+            stop();
         }
     }
-    wheel_update();
 }
