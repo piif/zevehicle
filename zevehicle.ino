@@ -14,12 +14,12 @@ Stepper left = {
     { 4, 5, 6, 7 }, 0, 0, 0
 };
 Stepper right = {
-    { 8, 9, 10, 11 }, 0, 0, 0
+    { 8, 9, 10, 11 }, 0, 1, 0
 };
 
-int stepsLen = 5;
+int stepsLen = 96;
 int nbSteps = 0;
-int speed = 1000;
+int speed = 20;
 char direction = 'S';
 
 void setHalf() {
@@ -122,11 +122,39 @@ void loop() {
 
 	handleInput();
 
+    remoteIR_keyCode irKey = remoteIR_check();
+    DEBUG(if (debug != debugBefore) {
+        Serial.print("D="); Serial.println(debug, HEX);
+        debugBefore = debug;
+    })
+
+    if (irKey != 0) {
+        // Serial.print("Pressed "); Serial.println(irKey, HEX);
+        switch (irKey) {
+            case IR_DIRECTION_UP:
+                Serial.println("UP");
+                setDirection("F");
+            break;
+            case IR_DIRECTION_DOWN:
+                Serial.println("DOWN");
+                setDirection("B");
+            break;
+            case IR_DIRECTION_LEFT:
+                Serial.println("LEFT");
+                setDirection("L");
+            break;
+            case IR_DIRECTION_RIGHT:
+                Serial.println("RIGHT");
+                setDirection("R");
+            break;
+        }
+    }
+
     if (nbSteps != 0) {
         nbSteps--;
         stepper_doStep(&left);
         stepper_doStep(&right);
-        motorState();
+        // motorState();
         delay(speed);
         if (nbSteps == 0) {
             stop();
