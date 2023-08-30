@@ -10,3 +10,4 @@ void screen_setup();
 void screen_intensity_incr();
 void displayValue(const char *message, int value);
 void displayChar(char c);
+void displayRight(const char *str);

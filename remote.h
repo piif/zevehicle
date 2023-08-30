@@ -32,7 +32,4 @@ remoteIR_keyCode remoteIR_check();
 
 void remoteIR_Setup();
 
-#define DEBUG(code) // code
-DEBUG(extern volatile unsigned long debug);
-
 #endif // REMOTE_H

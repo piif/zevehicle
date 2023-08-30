@@ -51,6 +51,12 @@ void displayChar(char c) {
     ledMatrix.flush();
 }
 
+void displayRight(const char *str) {
+    ledMatrix.clear();
+    ledMatrix.drawStringRight(str);
+    ledMatrix.flush();
+}
+
 // X = ledMatrix.drawString_P(X, progmem string);
 // X = ledMatrix.drawString(X, string);
 // X = ledMatrix.drawChar(X, char);

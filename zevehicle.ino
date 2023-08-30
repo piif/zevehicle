@@ -13,6 +13,18 @@ void(* resetFunc) (void) = 0;
 
 #define ENABLE_STEPPERS 3
 
+// on lego prototype :
+// 51 steps to move forward/backward 5cm
+// 76 steps to turn a quarter
+// speed 20 a bit slow, but with speed 10 first steps are weird
+// -> TODO start  at 20 and continue at 10 after some steps, then slow back to 20 before last steps ?
+
+#define TURN_STEPS 86    // for a quarter turn
+#define FORWARD_STEPS 51 // for 5cm
+
+#define INIT_SPEED 20
+#define MAX_SPEED  10
+
 // left motor is 96 steps, right one is 48 steps
 // -> by setting rigth motor on half steps, wheels are 96 steps per rotation
 // todo : try to use micro steps instead (4th and 8th steps) to have smooth movement ?
@@ -24,28 +36,89 @@ Stepper right = {
     { 8, 9, 10, 11 }, 0, 1, 0
 };
 
-int stepsLen = 96;
-int nbSteps = 0;
-int speed = 20;
-char direction = 'S';
+int currentStep, nbSteps = 0;
+int speed = INIT_SPEED;
 
-void setHalf() {
-    stepper_setHalf(&left,  1);
-    stepper_setHalf(&right, 1);
-}
-void setFull() {
-    stepper_setHalf(&left,  0);
-    stepper_setHalf(&right, 0);
-}
 
 void stop() {
-    nbSteps = 0;
+    currentStep = nbSteps = 0;
     digitalWrite(ENABLE_STEPPERS, 0);
 }
 
-void start() {
-    nbSteps = stepsLen;
+void start(int len) {
+    nbSteps = len;
+    currentStep = 0;
     digitalWrite(ENABLE_STEPPERS, 1);
+}
+#define PROGRAM_MAX 20
+char program[PROGRAM_MAX+1];
+bool programRunning = false;
+byte currentInstruction = 0;
+byte lastInstruction = 0;
+
+void displayProgram() {
+    if (lastInstruction == 0) {
+        displayRight("?");
+    } else {
+        displayRight(program);
+    }
+}
+
+bool pushProgram(char instruction) {
+    if (lastInstruction == PROGRAM_MAX) {
+        return false;
+    }
+    program[lastInstruction] = instruction;
+    lastInstruction++;
+    program[lastInstruction] = 0;
+    displayProgram();
+    return true;
+}
+
+bool popProgram() {
+    if (lastInstruction == 0) {
+        return false;
+    }
+    lastInstruction--;
+    program[lastInstruction] = 0;
+    displayProgram();
+    return true;
+}
+
+void nextInstruction() {
+    if (currentInstruction == lastInstruction) {
+        stop();
+        programRunning = false;
+    }
+    switch(program[currentInstruction]) {
+        case ARROW_UP:
+            left.clockwise  = 0;
+            right.clockwise = 0;
+            start(FORWARD_STEPS);
+        break;
+        case ARROW_DOWN:
+            left.clockwise  = 1;
+            right.clockwise = 1;
+            start(FORWARD_STEPS);
+        break;
+        case ARROW_LEFT:
+            left.clockwise  = 0;
+            right.clockwise = 1;
+            start(TURN_STEPS);
+        break;
+        case ARROW_RIGHT:
+            left.clockwise  = 1;
+            right.clockwise = 0;
+            start(TURN_STEPS);
+        break;
+    }
+    currentInstruction++;
+}
+
+void runProgram() {
+    currentInstruction = 0;
+    programRunning = true;
+    nextInstruction();
 }
 
 void motorState() {
@@ -60,55 +133,12 @@ void motorState() {
 void status() {
 	Serial.println("Commands :");
 	Serial.println("? : status");
-	Serial.println("d: set direction F (forward) B (backward) L (left) R (right) S (stop)");
-	Serial.print("s: set speed (ms between steps) , current = "); Serial.println(speed);
-	Serial.print("l: set how many steps to do , current = ");     Serial.println(stepsLen);
-	Serial.println("h/f: set half/full");
 
     motorState();
 }
 
-void setDirection(char const *d) {
-    direction = d[0];
-    switch(d[0]) {
-        case 'f':
-        case 'F':
-            left.clockwise  = 1;
-            right.clockwise = 1;
-            start();
-            break;
-        case 'b':
-        case 'B':
-            left.clockwise  = 0;
-            right.clockwise = 0;
-            start();
-            break;
-        case 'l':
-        case 'L':
-            left.clockwise  = 0;
-            right.clockwise = 1;
-            start();
-            break;
-        case 'r':
-        case 'R':
-            left.clockwise  = 1;
-            right.clockwise = 0;
-            start();
-            break;
-        case 's':
-        case 'S':
-            stop();
-        break;
-    }
-}
-
 InputItem inputs[] = {
-	{ '?', 'f', (void *)status       },
-	{ 'l', 'i', (void *)&stepsLen    },
-	{ 's', 'i', (void *)&speed       },
-	{ 'd', 'S', (void *)setDirection },
-	{ 'f', 'f', (void *)setFull      },
-	{ 'h', 'f', (void *)setHalf      }
+	{ '?', 'f', (void *)status },
 };
 
 void setup() {
@@ -132,56 +162,31 @@ void loop() {
 	handleInput();
 
     remoteIR_keyCode irKey = remoteIR_check();
-    DEBUG(if (debug != debugBefore) {
-        Serial.print("D="); Serial.println(debug, HEX);
-        debugBefore = debug;
-    })
 
     if (irKey != 0) {
         // Serial.print("Pressed "); Serial.println(irKey, HEX);
         switch (irKey) {
             case IR_DIRECTION_UP:
                 Serial.println("UP");
-                displayChar(ARROW_UP);
-                setDirection("F");
+                pushProgram(ARROW_UP);
             break;
             case IR_DIRECTION_DOWN:
                 Serial.println("DOWN");
-                displayChar(ARROW_DOWN);
-                setDirection("B");
+                pushProgram(ARROW_DOWN);
             break;
             case IR_DIRECTION_LEFT:
                 Serial.println("LEFT");
-                displayChar(ARROW_LEFT);
-                setDirection("L");
+                pushProgram(ARROW_LEFT);
             break;
             case IR_DIRECTION_RIGHT:
                 Serial.println("RIGHT");
-                displayChar(ARROW_RIGHT);
-                setDirection("R");
+                pushProgram(ARROW_RIGHT);
+            break;
+            case IR_CANCEL:
+                popProgram();
             break;
             case IR_OK:
-                // TODO ..
-            break;
-            case IR_VOLUME_UP:
-                speed += 10;
-                displayValue("v", speed);
-            break;
-            case IR_VOLUME_DOWN:
-                if (speed > 10) {
-                    speed -= 10;
-                }
-                displayValue("v", speed);
-            break;
-            case IR_PROGRAM_UP:
-                stepsLen++;
-                displayValue("p", stepsLen);
-            break;
-            case IR_PROGRAM_DOWN:
-                if (stepsLen > 1) {
-                    stepsLen--;
-                }
-                displayValue("p", stepsLen);
+                runProgram();
             break;
             case IR_POWER:
                 stop();
@@ -194,14 +199,15 @@ void loop() {
         }
     }
 
-    if (nbSteps != 0) {
-        nbSteps--;
+    // TODO : use setInterval or timer + interuptions instead ?
+    if (programRunning) {  // currentStep != nbSteps
         stepper_doStep(&left);
         stepper_doStep(&right);
         // motorState();
         delay(speed);
-        if (nbSteps == 0) {
-            stop();
+        currentStep++;
+        if (currentStep == nbSteps) {
+            nextInstruction();
         }
     }
 }

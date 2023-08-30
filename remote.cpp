@@ -20,7 +20,6 @@ enum { RECORD_NONE, RECORD_WAIT_HIGH, RECORD_WAIT_LOW,  RECORD_WAIT_TRAIL, RECOR
 volatile unsigned long recordMask = 0;
 volatile unsigned long recordMaskBit = 0;
 volatile unsigned long recordValue= 0;
-DEBUG(volatile unsigned long debug);
 
 volatile unsigned long recordingTimeout = 0;
 
@@ -28,7 +27,6 @@ unsigned long remoteIR_check() {
     if (recordState == RECORD_END) {
         recordingTimeout = 0;
         recordState = RECORD_NONE;
-        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
         if ((recordValue & REMOTE_IR_ERROR_CODE_BASE) == REMOTE_IR_ERROR_CODE_BASE) {
             // return error code "as is"
             return recordValue;
@@ -43,7 +41,6 @@ unsigned long remoteIR_check() {
     if (recordingTimeout != 0 && micros() > recordingTimeout) {
         recordingTimeout = 0;
         recordState = RECORD_NONE;
-        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
         return REMOTE_IR_ERROR(IR_ERROR_TIMEOUT) | (recordValue & 0xFFFF);
     }
     return 0;
@@ -58,12 +55,10 @@ void recordInterruptHandler() {
     unsigned long now = micros();
     recordingTimeout = now + IR_MAX_DELAY;
 
-    DEBUG(debug = (debug & 0xFFFFF0FF) | (recordState<<8));
 
     if (recordState == RECORD_WAIT_TRAIL) {
         // trail received, that's the end
         recordState = RECORD_END;
-        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
         return;
     }
 
@@ -73,14 +68,12 @@ void recordInterruptHandler() {
         // => previous frame is skipped (or we should ignore following ones ?)
         timeLow = now;
         recordState = RECORD_WAIT_HIGH;
-        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
         return;
     }
     if (recordState == RECORD_WAIT_HIGH) {
         timeLow = now - timeLow;
         timeHigh = now;
         recordState = RECORD_WAIT_LOW;
-        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
         return;
     }
     if (recordState == RECORD_WAIT_LOW) {
@@ -92,19 +85,16 @@ void recordInterruptHandler() {
             if (near(timeLow, IR_PROTO_HLOW) && near(timeHigh, IR_PROTO_HHIGH)) {
                 recordMask  = 1L<<(IR_PROTO_FRAME_LEN-1);
                 recordMaskBit = IR_PROTO_FRAME_LEN-1;
-                DEBUG(debug = (debug & 0xFFFFFF00) | recordMaskBit);
                 recordValue = 0;
             } else if (near(timeLow, IR_PROTO_RLOW) && near(timeHigh, IR_PROTO_RHIGH)) {
                 // convention : repeat key = prefix + key code ffff
                 recordValue = IR_PROTO_PREFIX | IR_PROTO_DATA_MASK; 
                 timeLow = now;
                 recordState = RECORD_WAIT_TRAIL;
-                DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
                 return;
             } else {
                 recordValue = REMOTE_IR_ERROR(IR_ERROR_BAD_HEADER);
                 recordMask  = 0;
-                DEBUG(debug = (debug & 0xFFFF0F00) | (recordState<<12));
                 recordState = RECORD_END;
             }
         } else {
@@ -114,24 +104,20 @@ void recordInterruptHandler() {
                 recordValue = REMOTE_IR_ERROR(IR_ERROR_BAD_BIT);
                 recordMask = 0;
                 recordState = RECORD_END;
-                DEBUG(debug = (debug & 0xFFFF0F00) | (recordState<<12));
                 return;
             }
             recordMask >>= 1;
             recordMaskBit--;
-            DEBUG(debug = (debug & 0xFFFFFF00) | (recordMaskBit & 0xFF));
             if (recordMask == 0) {
                 // all bits interpreted, send result.
                 timeLow = now;
                 recordState = RECORD_WAIT_TRAIL;
-                DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
                 return;
             }
         }
 
         timeLow = now;
         recordState = RECORD_WAIT_HIGH;
-        DEBUG(debug = (debug & 0xFFFF0FFF) | (recordState<<12));
         return;
     }
 }
