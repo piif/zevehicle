@@ -3,12 +3,19 @@
 
 #include "remote.h"
 #include "stepper.h"
+#include "screen.h"
+
+void(* resetFunc) (void) = 0;
 
 #ifndef DEFAULT_BAUDRATE
 	#define DEFAULT_BAUDRATE 115200
 #endif
 
 #define ENABLE_STEPPERS 3
+
+// left motor is 96 steps, right one is 48 steps
+// -> by setting rigth motor on half steps, wheels are 96 steps per rotation
+// todo : try to use micro steps instead (4th and 8th steps) to have smooth movement ?
 
 Stepper left = {
     { 4, 5, 6, 7 }, 0, 0, 0
@@ -54,14 +61,14 @@ void status() {
 	Serial.println("Commands :");
 	Serial.println("? : status");
 	Serial.println("d: set direction F (forward) B (backward) L (left) R (right) S (stop)");
-	Serial.println("s: set speed (ms between steps)");
-	Serial.println("l: set how many steps to do");
+	Serial.print("s: set speed (ms between steps) , current = "); Serial.println(speed);
+	Serial.print("l: set how many steps to do , current = ");     Serial.println(stepsLen);
 	Serial.println("h/f: set half/full");
 
     motorState();
 }
 
-void setDirection(char *d) {
+void setDirection(char const *d) {
     direction = d[0];
     switch(d[0]) {
         case 'f':
@@ -114,6 +121,8 @@ void setup() {
 
     remoteIR_Setup();
 
+    screen_setup();
+
 	registerInput(sizeof(inputs), inputs);
 	Serial.println("setup ok");
 }
@@ -133,19 +142,54 @@ void loop() {
         switch (irKey) {
             case IR_DIRECTION_UP:
                 Serial.println("UP");
+                displayChar(ARROW_UP);
                 setDirection("F");
             break;
             case IR_DIRECTION_DOWN:
                 Serial.println("DOWN");
+                displayChar(ARROW_DOWN);
                 setDirection("B");
             break;
             case IR_DIRECTION_LEFT:
                 Serial.println("LEFT");
+                displayChar(ARROW_LEFT);
                 setDirection("L");
             break;
             case IR_DIRECTION_RIGHT:
                 Serial.println("RIGHT");
+                displayChar(ARROW_RIGHT);
                 setDirection("R");
+            break;
+            case IR_OK:
+                // TODO ..
+            break;
+            case IR_VOLUME_UP:
+                speed += 10;
+                displayValue("v", speed);
+            break;
+            case IR_VOLUME_DOWN:
+                if (speed > 10) {
+                    speed -= 10;
+                }
+                displayValue("v", speed);
+            break;
+            case IR_PROGRAM_UP:
+                stepsLen++;
+                displayValue("p", stepsLen);
+            break;
+            case IR_PROGRAM_DOWN:
+                if (stepsLen > 1) {
+                    stepsLen--;
+                }
+                displayValue("p", stepsLen);
+            break;
+            case IR_POWER:
+                stop();
+                resetFunc();
+            break;
+            case IR_TEXT:
+                Serial.println("TEXT");
+                screen_intensity_incr();
             break;
         }
     }
