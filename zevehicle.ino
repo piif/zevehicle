@@ -57,30 +57,43 @@ byte currentInstruction = 0;
 byte lastInstruction = 0;
 
 void displayProgram() {
-    if (lastInstruction == 0) {
-        displayRight("?");
-    } else {
-        displayRight(program);
+    // afficher une tanche autour de current
+    // en collant en haut ou en bas si on est prêt du bord
+    // en collant en haut s'il y a moins de 4 instructions (ou pas : partir du bas ?)
+    for(byte i=0; i<lastInstruction; i++) {
+        Serial.print(program[i]);
     }
+    Serial.println();
+
+    displayClear();
+    displayChar(0, '?');
+    displayChar(0, 0x7f);
+    byte y=1, instr=lastInstruction;
+    while(y<=3 && instr>0) {
+        displayChar(y, program[instr-1]);
+        y++;
+        instr--;
+    }
+    displayFlush();
 }
 
 bool pushProgram(char instruction) {
+    // TODO : remplacer en current
     if (lastInstruction == PROGRAM_MAX) {
         return false;
     }
     program[lastInstruction] = instruction;
     lastInstruction++;
-    program[lastInstruction] = 0;
     displayProgram();
     return true;
 }
 
 bool popProgram() {
+    // TODO : décaler vers le bas de current+1 à last
     if (lastInstruction == 0) {
         return false;
     }
     lastInstruction--;
-    program[lastInstruction] = 0;
     displayProgram();
     return true;
 }
@@ -181,6 +194,16 @@ void loop() {
             case IR_DIRECTION_RIGHT:
                 Serial.println("RIGHT");
                 pushProgram(ARROW_RIGHT);
+            break;
+            case IR_PROGRAM_DOWN:
+                if (!running && currentStep>0) {
+                    currentStep--;
+                }
+            break;
+            case IR_PROGRAM_UP:
+                if (!running && currentStep<lastInstruction) {
+                    currentStep++;
+                }
             break;
             case IR_CANCEL:
                 popProgram();

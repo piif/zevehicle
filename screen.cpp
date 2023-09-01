@@ -45,20 +45,14 @@ void displayValue(const char *message, int value) {
     ledMatrix.flush();
 }
 
-void displayChar(char c) {
+void displayClear() {
     ledMatrix.clear();
-    ledMatrix.drawChar(0, c);
-    ledMatrix.flush();
 }
 
-void displayRight(const char *str) {
-    ledMatrix.clear();
-    ledMatrix.drawStringRight(str);
-    ledMatrix.flush();
+void displayChar(byte y, char c) {
+    ledMatrix.drawVChar(y, c);
 }
 
-// X = ledMatrix.drawString_P(X, progmem string);
-// X = ledMatrix.drawString(X, string);
-// X = ledMatrix.drawChar(X, char);
-// ledMatrix.drawPixel(0, 7, 1);
-// ledMatrix.flush();
+void displayFlush() {
+    ledMatrix.flush();
+}
