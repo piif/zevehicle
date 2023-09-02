@@ -1,7 +1,7 @@
 // PROGRAM SETUP
 // **************
 
-#define DELAY_BETWEEN_INSTRUCTION 200
+#define DELAY_BETWEEN_INSTRUCTIONS 200
 #define PROGRAM_MAX 20
 
 // STEPPERS SETUP
@@ -30,9 +30,10 @@
 #define FORWARD_STEPS 51 // for 5cm
 
 // delay between steps (ms) at startup and before last steps (NOT YET IMPLEMENTED)
-#define INIT_SPEED 20
+#define LOW_SPEED 20
+#define LOW_SPEED_STEPS 5
 // delay between steps (ms)
-#define MAX_SPEED  10
+#define HIGH_SPEED  10
 
 // left motor is 96 steps, right one is 48 steps
 // -> by setting rigth motor on half steps, wheels are 96 steps per rotation

@@ -14,7 +14,6 @@ Stepper right = {
 };
 
 int currentStep, nbSteps = 0;
-int speed = INIT_SPEED;
 
 void move_setup() {
     pinMode(ENABLE_STEPPERS, OUTPUT);
@@ -40,7 +39,11 @@ bool move_update() {
     stepper_doStep(&left);
     stepper_doStep(&right);
     // motorState();
-    delay(speed);
+    if (currentStep < LOW_SPEED_STEPS || currentStep >= nbSteps-LOW_SPEED_STEPS) {
+        delay(LOW_SPEED);
+    } else {
+        delay(HIGH_SPEED);
+    }
     currentStep++;
     return currentStep == nbSteps;
 }
@@ -50,6 +53,5 @@ void move_state() {
     Serial.print(" / ");     Serial.println(left.step);
 	Serial.print("right ");  Serial.print(right.clockwise);
     Serial.print(" / ");     Serial.println(right.step);
-    Serial.print("remains ");Serial.print(nbSteps);
-    Serial.print(" at ");    Serial.println(speed  );
+    Serial.print("remains ");Serial.println(nbSteps);
 }

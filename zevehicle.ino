@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "serialInput.h"
 
+#include "defines.h"
 #include "remote.h"
 #include "move.h"
 #include "screen.h"
@@ -83,8 +84,8 @@ void loop() {
     // TODO : use setInterval or timer + interuptions instead ?
     if (program_running) {
         if (move_update()) {
-            #ifdef DELAY_BETWEEN_INSTRUCTION
-            delay(DELAY_BETWEEN_INSTRUCTION);
+            #ifdef DELAY_BETWEEN_INSTRUCTIONS
+            delay(DELAY_BETWEEN_INSTRUCTIONS);
             #endif
             program_nextInstruction();
         }
