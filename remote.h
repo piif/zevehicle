@@ -24,12 +24,8 @@
 #define IR_ERROR_BAD_PREFIX 3L
 #define IR_ERROR_BAD_BIT    4L
 
-// TODO : pass these values as setup parameters
-#define RECORD_INPUT 2
-#define RECORD_INTR 0
+void remoteIR_Setup();
 
 remoteIR_keyCode remoteIR_check();
-
-void remoteIR_Setup();
 
 #endif // REMOTE_H

@@ -8,13 +8,14 @@
  */
 
 #include "screen.h"
+#include "hardware.h"
 #include "ledMatrix.h"
 
 byte intensity = 0;
 LedMatrix ledMatrix;
 
 void screen_setup() {
-    ledMatrix.setup(4, A5, A4, 12, intensity);
+    ledMatrix.setup(SCREEN_SIZE, SCREEN_CLK, SCREEN_DS, SCREEN_DIN, intensity);
     // ledMatrix.inverted = true;
     ledMatrix.drawStringRight("ready...");
     ledMatrix.flush();
@@ -24,10 +25,10 @@ void screen_intensity_incr() {
     intensity = (intensity + 1) & 7;
     Serial.println(intensity);
     ledMatrix.setIntensity(intensity);
-    displayValue("lum", intensity+1);
+    screen_displayValue("lum", intensity+1);
 }
 
-void displayValue(const char *message, int value) {
+void screen_displayValue(const char *message, int value) {
     ledMatrix.clear();
     byte x = ledMatrix.drawString(0, message);
     x = ledMatrix.drawChar(x, ':');
@@ -45,14 +46,14 @@ void displayValue(const char *message, int value) {
     ledMatrix.flush();
 }
 
-void displayClear() {
+void screen_clear() {
     ledMatrix.clear();
 }
 
-void displayChar(byte y, char c) {
+void screen_displayChar(byte y, char c) {
     ledMatrix.drawVChar(y, c);
 }
 
-void displayFlush() {
+void screen_flush() {
     ledMatrix.flush();
 }
