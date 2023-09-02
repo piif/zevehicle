@@ -5,6 +5,7 @@
 #include "move.h"
 #include "screen.h"
 #include "program.h"
+#include "myFont.h"
 
 void(* resetFunc) (void) = 0;
 
@@ -21,7 +22,6 @@ void setup() {
 
     screen_setup();
 
-    delay(2000);
     program_display();
 }
 
@@ -34,19 +34,19 @@ void loop() {
         switch (irKey) {
             case IR_DIRECTION_UP:
                 Serial.println("UP");
-                program_push(ARROW_UP);
+                program_push(CHAR_UP);
             break;
             case IR_DIRECTION_DOWN:
                 Serial.println("DOWN");
-                program_push(ARROW_DOWN);
+                program_push(CHAR_DOWN);
             break;
             case IR_DIRECTION_LEFT:
                 Serial.println("LEFT");
-                program_push(ARROW_LEFT);
+                program_push(CHAR_LEFT);
             break;
             case IR_DIRECTION_RIGHT:
                 Serial.println("RIGHT");
-                program_push(ARROW_RIGHT);
+                program_push(CHAR_RIGHT);
             break;
             case IR_PROGRAM_DOWN:
                 Serial.println("Cursor down");

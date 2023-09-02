@@ -1,4 +1,11 @@
+// PROGRAM SETUP
+// **************
+
+#define DELAY_BETWEEN_INSTRUCTION 200
+#define PROGRAM_MAX 20
+
 // STEPPERS SETUP
+// **************
 
 #define ENABLE_STEPPERS 3
 
@@ -35,12 +42,15 @@
 #define RIGHT_MODE_HALF 1
 
 // REMOTE_SETUP
+// **************
 
 // TODO : pass these values as setup parameters
 #define REMOTE_INPUT 2
 #define REMOTE_INTR 0
 
 // SCREEN SETUP
+// **************
+
 #define SCREEN_SIZE  4
 #define SCREEN_CLK  A5
 #define SCREEN_DS   A4

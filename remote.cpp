@@ -1,5 +1,5 @@
 #include "remote.h"
-#include "hardware.h"
+#include "defines.h"
 
 bool near(unsigned long value, unsigned long reference) {
     return ((value > reference - IR_PROTO_MARGIN) && (value < reference + IR_PROTO_MARGIN));

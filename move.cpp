@@ -1,6 +1,6 @@
 
 #include <Arduino.h>
-#include "hardware.h"
+#include "defines.h"
 #include "move.h"
 #include "stepper.h"
 

@@ -1,9 +1,9 @@
 #include "program.h"
-#include "hardware.h"
+#include "defines.h"
 #include "move.h"
 #include "screen.h"
+#include "myFont.h"
 
-#define PROGRAM_MAX 20
 char program[PROGRAM_MAX+1];
 byte currentInstruction = 0;
 byte lastInstruction = 0;
@@ -35,14 +35,13 @@ void program_display() {
     }
 
     for (short y = SCREEN_SIZE-1; (y >= 0) && (offset <= lastInstruction); y--, offset++) {
-        if (offset == lastInstruction) {
-            screen_displayChar(y, '?');
-        } else {
+        if (offset != lastInstruction) {
             screen_displayChar(y, program[offset]);
         }
         if (offset == currentInstruction) {
-            screen_displayChar(y, 0x7f);
+            screen_displayChar(y, CHAR_CURSOR);
         }
+        screen_displayChar(y, (offset+1) % 10);
     }
     screen_flush();
 }
@@ -89,16 +88,16 @@ void program_nextInstruction() {
         program_running = false;
     }
     switch(program[currentInstruction]) {
-        case ARROW_UP:
+        case CHAR_UP:
             move_start(0, 0, FORWARD_STEPS);
         break;
-        case ARROW_DOWN:
+        case CHAR_DOWN:
             move_start(1, 1, FORWARD_STEPS);
         break;
-        case ARROW_LEFT:
+        case CHAR_LEFT:
             move_start(0, 1, TURN_STEPS);
         break;
-        case ARROW_RIGHT:
+        case CHAR_RIGHT:
             move_start(1, 0, TURN_STEPS);
         break;
     }
@@ -113,6 +112,7 @@ void program_run() {
 
 void program_break() {
     program_running = false;
+    move_stop();
 }
 
 // edition mode : move cursor to previous/next instruction
