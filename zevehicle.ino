@@ -16,6 +16,7 @@ void(* resetFunc) (void) = 0;
 
 void setup() {
 	Serial.begin(DEFAULT_BAUDRATE);
+    Serial.println("Begin setup");
 
     move_setup();
 
@@ -24,6 +25,7 @@ void setup() {
     screen_setup();
 
     program_display();
+    Serial.println("End setup");
 }
 
 void loop() {

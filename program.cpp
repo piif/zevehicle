@@ -83,9 +83,11 @@ bool program_pop() {
 }
 
 void program_nextInstruction() {
+    program_display();
     if (currentInstruction == lastInstruction) {
         move_stop();
         program_running = false;
+        return;
     }
     switch(program[currentInstruction]) {
         case CHAR_UP:
@@ -111,8 +113,9 @@ void program_run() {
 }
 
 void program_break() {
-    program_running = false;
     move_stop();
+    program_running = false;
+    program_display();
 }
 
 // edition mode : move cursor to previous/next instruction

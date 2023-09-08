@@ -55,4 +55,4 @@
 #define SCREEN_SIZE  4
 #define SCREEN_CLK  A5
 #define SCREEN_DS   A4
-#define SCREEN_DIN  12
+#define SCREEN_DIN  A3 // 12
