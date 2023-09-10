@@ -1,10 +1,10 @@
 # FOR UNO
-#BOARD := arduino:avr:uno
+BOARD := arduino:avr:uno
 
 # FOR NANO
-BOARD := arduino:avr:nano:cpu=atmega328isp
-UPLOAD_PORT := /dev/ttyACM0
-BAUDRATE=115200 # 19200
+#BOARD := arduino:avr:nano:cpu=atmega328isp
+#UPLOAD_PORT := /dev/ttyACM0
+#BAUDRATE=115200 # 19200
 
 # common options
 LIBRARY_PATH := ../ArduinoTools ../ArduinoLibs

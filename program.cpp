@@ -1,7 +1,7 @@
 #include "program.h"
 #include "defines.h"
 #include "move.h"
-#include "screen.h"
+// #include "screen.h"
 #include "myFont.h"
 
 char program[PROGRAM_MAX+1];
@@ -12,38 +12,39 @@ bool program_running = false;
 
 
 void program_display() {
-    // afficher une tranche autour de current
-    // en collant en haut ou en bas si on est prêt du bord
-    // en collant en haut s'il y a moins de 4 instructions (ou pas : partir du bas ?)
-    for(byte i=0; i<lastInstruction; i++) {
-        if (i == currentInstruction) {
-            Serial.print('>');
-        }
-        Serial.print(program[i]);
-    }
-    Serial.println();
+    return;
+    // // afficher une tranche autour de current
+    // // en collant en haut ou en bas si on est prêt du bord
+    // // en collant en haut s'il y a moins de 4 instructions (ou pas : partir du bas ?)
+    // for(byte i=0; i<lastInstruction; i++) {
+    //     if (i == currentInstruction) {
+    //         Serial.print('>');
+    //     }
+    //     Serial.print(program[i]);
+    // }
+    // Serial.println();
 
-    screen_clear();
+    // screen_clear();
 
-    byte offset;
-    if (lastInstruction < SCREEN_SIZE || currentInstruction == 0) {
-        offset = 0;
-    } else if (lastInstruction - currentInstruction < SCREEN_SIZE-1) {
-        offset = lastInstruction - (SCREEN_SIZE-1);
-    } else {
-        offset = currentInstruction - 1;
-    }
+    // byte offset;
+    // if (lastInstruction < SCREEN_SIZE || currentInstruction == 0) {
+    //     offset = 0;
+    // } else if (lastInstruction - currentInstruction < SCREEN_SIZE-1) {
+    //     offset = lastInstruction - (SCREEN_SIZE-1);
+    // } else {
+    //     offset = currentInstruction - 1;
+    // }
 
-    for (short y = SCREEN_SIZE-1; (y >= 0) && (offset <= lastInstruction); y--, offset++) {
-        if (offset != lastInstruction) {
-            screen_displayChar(y, program[offset]);
-        }
-        if (offset == currentInstruction) {
-            screen_displayChar(y, CHAR_CURSOR);
-        }
-        screen_displayChar(y, (offset+1) % 10);
-    }
-    screen_flush();
+    // for (short y = SCREEN_SIZE-1; (y >= 0) && (offset <= lastInstruction); y--, offset++) {
+    //     if (offset != lastInstruction) {
+    //         screen_displayChar(y, program[offset]);
+    //     }
+    //     if (offset == currentInstruction) {
+    //         screen_displayChar(y, CHAR_CURSOR);
+    //     }
+    //     screen_displayChar(y, (offset+1) % 10);
+    // }
+    // screen_flush();
 }
 
 // replace current instruction, or append if at end
