@@ -52,6 +52,9 @@
 // LCD SCREEN SETUP
 // **************
 
+#define SCREEN_COLS     16
+#define SCREEN_ROWS      2
+
 #define SCREEN_ENABLE    9
 #define SCREEN_READ_SEL  8
 #define SCREEN_D4        4

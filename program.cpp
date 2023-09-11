@@ -1,8 +1,7 @@
 #include "program.h"
 #include "defines.h"
 #include "move.h"
-// #include "screen.h"
-#include "myFont.h"
+#include "screen.h"
 
 char program[PROGRAM_MAX+1];
 byte currentInstruction = 0;
@@ -12,39 +11,63 @@ bool program_running = false;
 
 
 void program_display() {
-    return;
-    // // afficher une tranche autour de current
-    // // en collant en haut ou en bas si on est prêt du bord
-    // // en collant en haut s'il y a moins de 4 instructions (ou pas : partir du bas ?)
-    // for(byte i=0; i<lastInstruction; i++) {
-    //     if (i == currentInstruction) {
-    //         Serial.print('>');
-    //     }
-    //     Serial.print(program[i]);
-    // }
-    // Serial.println();
+    // afficher une tranche autour de current
+    // en collant à gauche ou à droite si on est prêt du bord
+    // en collant à gauche s'il y a moins de 16 instructions
+    for(byte i=0; i<lastInstruction; i++) {
+        if (i == currentInstruction) {
+            Serial.print('>');
+        }
+        Serial.print(program[i]);
+    }
+    Serial.println();
 
-    // screen_clear();
+    byte offset;
+    if (lastInstruction < SCREEN_COLS || currentInstruction  < SCREEN_COLS/2) {
+        offset = 0;
+    } else if (lastInstruction - currentInstruction < SCREEN_COLS/2) {
+        offset = lastInstruction - (SCREEN_COLS-1);
+    } else {
+        offset = currentInstruction - SCREEN_COLS/2;
+    }
 
-    // byte offset;
-    // if (lastInstruction < SCREEN_SIZE || currentInstruction == 0) {
-    //     offset = 0;
-    // } else if (lastInstruction - currentInstruction < SCREEN_SIZE-1) {
-    //     offset = lastInstruction - (SCREEN_SIZE-1);
-    // } else {
-    //     offset = currentInstruction - 1;
-    // }
+    screen_clear();
 
-    // for (short y = SCREEN_SIZE-1; (y >= 0) && (offset <= lastInstruction); y--, offset++) {
-    //     if (offset != lastInstruction) {
-    //         screen_displayChar(y, program[offset]);
-    //     }
-    //     if (offset == currentInstruction) {
-    //         screen_displayChar(y, CHAR_CURSOR);
-    //     }
-    //     screen_displayChar(y, (offset+1) % 10);
-    // }
-    // screen_flush();
+    if (program_running) {
+        screen_print("Execution :");
+    } else {
+        screen_print("Programme :");
+    }
+
+    screen_setPos(1, 0);
+    for (short col = 0; (col < SCREEN_COLS) && (offset <= lastInstruction); col++, offset++) {
+        if (col == 0 && offset != 0) {
+            screen_print(CHAR_BEFORE);
+        } else if (col == SCREEN_COLS-1 && offset < lastInstruction-1) {
+            screen_print(CHAR_AFTER);
+        } else if (offset == currentInstruction) {
+            if (offset == lastInstruction) {
+                screen_print(CHAR_CURSOR);
+            } else {
+                switch(program[offset]) {
+                    case CHAR_UP:
+                        screen_print(CHAR_UP_CURSOR);
+                    break;
+                    case CHAR_DOWN:
+                        screen_print(CHAR_DOWN_CURSOR);
+                    break;
+                    case CHAR_LEFT:
+                        screen_print(CHAR_LEFT_CURSOR);
+                    break;
+                    case CHAR_RIGHT:
+                        screen_print(CHAR_RIGHT_CURSOR);
+                    break;
+                }
+            }
+        } else if (offset != lastInstruction) {
+            screen_print(program[offset]);
+        }
+    }
 }
 
 // replace current instruction, or append if at end
@@ -86,8 +109,7 @@ bool program_pop() {
 void program_nextInstruction() {
     program_display();
     if (currentInstruction == lastInstruction) {
-        move_stop();
-        program_running = false;
+        program_break();
         return;
     }
     switch(program[currentInstruction]) {
@@ -98,10 +120,10 @@ void program_nextInstruction() {
             move_start(1, 1, FORWARD_STEPS);
         break;
         case CHAR_LEFT:
-            move_start(0, 1, TURN_STEPS);
+            move_start(1, 0, TURN_STEPS);
         break;
         case CHAR_RIGHT:
-            move_start(1, 0, TURN_STEPS);
+            move_start(0, 1, TURN_STEPS);
         break;
     }
     currentInstruction++;

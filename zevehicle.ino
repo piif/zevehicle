@@ -4,9 +4,8 @@
 #include "defines.h"
 #include "remote.h"
 #include "move.h"
-// #include "screen.h"
+#include "screen.h"
 #include "program.h"
-#include "myFont.h"
 
 void(* resetFunc) (void) = 0;
 
@@ -22,7 +21,7 @@ void setup() {
 
     remoteIR_Setup();
 
-    // screen_setup();
+    screen_setup();
 
     program_display();
     Serial.println("End setup");
@@ -78,7 +77,7 @@ void loop() {
             break;
             case IR_TEXT:
                 Serial.println("TEXT");
-                // screen_intensity_incr();
+                screen_intensity_incr();
             break;
         }
     }

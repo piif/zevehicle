@@ -1,40 +1,126 @@
-/**
- * 
- *  Vcc -> +5 or Vin ?
- *  GND -> Gnd
- *  DIN -> 12
- *  CS  -> SDA = A4
- *  CLK -> SCL = A5
- */
-
 #include "screen.h"
 #include "defines.h"
-// #include "ledMatrix.h"
 
-// byte intensity = 0;
-// LedMatrix ledMatrix;
+#include <LiquidCrystal.h>
 
-// void screen_setup() {
-//     ledMatrix.setup(SCREEN_SIZE, SCREEN_CLK, SCREEN_DS, SCREEN_DIN, intensity);
-//     // ledMatrix.inverted = true;
-//     ledMatrix.drawStringRight("\0x0A\0x0B\0x0C\0x0D");
-//     ledMatrix.flush();
-// }
+// Création de l'objet lcd (avec les différents ports numériques qu'il utilise)
+// = RS, Enable, D0, D1, D2, D3
+LiquidCrystal lcd(SCREEN_READ_SEL, SCREEN_ENABLE, SCREEN_D4, SCREEN_D5, SCREEN_D6, SCREEN_D7);
 
-// void screen_intensity_incr() {
-//     intensity = (intensity + 1) & 7;
-//     Serial.println(intensity);
-//     ledMatrix.setIntensity(intensity);
-// }
+byte char_up[8] = {
+  0b00100,
+  0b01110,
+  0b10101,
+  0b00100,
+  0b00100,
+  0b00000,
+  0b00000,
+  0b00000,
+};
+byte char_down[8] = {
+  0b00100,
+  0b00100,
+  0b10101,
+  0b01110,
+  0b00100,
+  0b00000,
+  0b00000,
+  0b00000,
+};
+byte char_left[8] = {
+  0b00100,
+  0b01000,
+  0b11110,
+  0b01001,
+  0b00101,
+  0b00001,
+  0b00000,
+  0b00000,
+};
+byte char_right[8] = {
+  0b00100,
+  0b00010,
+  0b01111,
+  0b10010,
+  0b10100,
+  0b10000,
+  0b00000,
+  0b00000,
+};
+byte char_up_ul[8] = {
+  0b00100,
+  0b01110,
+  0b10101,
+  0b00100,
+  0b00100,
+  0b00000,
+  0b11111,
+  0b00000,
+};
+byte char_down_ul[8] = {
+  0b00100,
+  0b00100,
+  0b10101,
+  0b01110,
+  0b00100,
+  0b00000,
+  0b11111,
+  0b00000,
+};
+byte char_left_ul[8] = {
+  0b00100,
+  0b01000,
+  0b11110,
+  0b01001,
+  0b00101,
+  0b00000,
+  0b11111,
+  0b00000,
+};
+byte char_right_ul[8] = {
+  0b00100,
+  0b00010,
+  0b01111,
+  0b10010,
+  0b10100,
+  0b00000,
+  0b11111,
+  0b00000,
+};
 
-// void screen_clear() {
-//     ledMatrix.clear();
-// }
+byte screen_light = 0x40;
 
-// void screen_displayChar(byte y, char c) {
-//     ledMatrix.drawVChar(y, c);
-// }
+void screen_setup() {
+    pinMode(SCREEN_LIGHT, OUTPUT);
+    analogWrite(SCREEN_LIGHT, screen_light);
+    lcd.begin(16, 2);
+    lcd.createChar(0, char_up);
+    lcd.createChar(1, char_down);
+    lcd.createChar(2, char_left);
+    lcd.createChar(3, char_right);
+    lcd.createChar(4, char_up_ul);
+    lcd.createChar(5, char_down_ul);
+    lcd.createChar(6, char_left_ul);
+    lcd.createChar(7, char_right_ul);
+    lcd.display();
+}
 
-// void screen_flush() {
-//     ledMatrix.flush();
-// }
+void screen_intensity_incr() {
+    screen_light += 0x40;
+    analogWrite(SCREEN_LIGHT, screen_light);
+}
+
+void screen_clear() {
+    lcd.clear();
+}
+
+void screen_setPos(byte row, byte col) {
+    lcd.setCursor(col, row);
+}
+
+void screen_print(char c) {
+    lcd.print(c);
+}
+void screen_print(const char *s) {
+    lcd.print(s);
+}
