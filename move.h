@@ -3,9 +3,13 @@
 
 #include <Arduino.h>
 
-void move_setup();
+void move_setup(unsigned int forward_steps_init, unsigned int turn_steps_init);
 
-void move_start(bool left_clockwise, bool right_clockwise, int len);
+void move_forward();
+void move_backward();
+void move_left();
+void move_right();
+
 void move_stop();
 
 // make motors move for one step, then wait required delay

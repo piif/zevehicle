@@ -4,18 +4,24 @@
 #include "move.h"
 #include "stepper.h"
 
-Stepper left = {
+static Stepper left = {
     { STEPPER_LEFT_A, STEPPER_LEFT_B, STEPPER_LEFT_C, STEPPER_LEFT_D },
     0, LEFT_MODE_HALF, 0
 };
-Stepper right = {
+static Stepper right = {
     { STEPPER_RIGHT_A, STEPPER_RIGHT_B, STEPPER_RIGHT_C, STEPPER_RIGHT_D },
     0, RIGHT_MODE_HALF, 0
 };
 
-int currentStep, nbSteps = 0;
+static int currentStep, nbSteps;
 
-void move_setup() {
+static unsigned int forward_steps, turn_steps;
+
+void move_setup(unsigned int forward_steps_init, unsigned int turn_steps_init) {
+    forward_steps = forward_steps_init;
+    turn_steps = turn_steps_init;
+    currentStep = nbSteps = 0;
+
     pinMode(ENABLE_STEPPERS, OUTPUT);
     digitalWrite(ENABLE_STEPPERS, 0);
     stepper_setup(&left);
@@ -28,6 +34,19 @@ void move_start(bool left_clockwise, bool right_clockwise, int len) {
     nbSteps = len;
     currentStep = 0;
     digitalWrite(ENABLE_STEPPERS, 1);
+}
+
+void move_forward() {
+    move_start(0, 0, forward_steps);
+}
+void move_backward() {
+    move_start(1, 1, forward_steps);
+}
+void move_left() {
+    move_start(1, 0, turn_steps);
+}
+void move_right() {
+    move_start(0, 1, turn_steps);
 }
 
 void move_stop() {

@@ -1,10 +1,10 @@
 #include "stepper.h"
 
-byte fullSteps[] = { 0x1, 0x2, 0x4, 0x8 };
-byte halfSteps[] = { 0x1, 0x3, 0x2, 0x6, 0x4, 0xc, 0x8, 0x9  };
+static const byte fullSteps[] = { 0x1, 0x2, 0x4, 0x8 };
+static const byte halfSteps[] = { 0x1, 0x3, 0x2, 0x6, 0x4, 0xc, 0x8, 0x9  };
 
 void stepper_doStep(Stepper *stepper) {
-    byte *steps = stepper->half ? halfSteps : fullSteps;
+    const byte *steps = stepper->half ? halfSteps : fullSteps;
     byte maxSteps = stepper->half ? 7 : 3;
 
     digitalWrite(stepper->outs[0], steps[stepper->step] & 1);

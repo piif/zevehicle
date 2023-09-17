@@ -1,9 +1,9 @@
 #include "wheel.h"
 
-volatile byte wheelPos1;
-volatile byte wheelPos2;
-volatile byte wheelState1;
-volatile byte wheelState2;
+static volatile byte wheelPos1;
+static volatile byte wheelPos2;
+static volatile byte wheelState1;
+static volatile byte wheelState2;
 
 byte readWheelState() {
     return digitalRead(WHEEL1A) << 1 | digitalRead(WHEEL1B);

@@ -3,9 +3,9 @@
 #include "move.h"
 #include "screen.h"
 
-char program[PROGRAM_MAX+1];
-byte currentInstruction = 0;
-byte lastInstruction = 0;
+static char program[PROGRAM_MAX+1];
+static byte currentInstruction = 0;
+static byte lastInstruction = 0;
 
 bool program_running = false;
 
@@ -101,6 +101,9 @@ bool program_pop() {
     for(byte i = currentInstruction; i < lastInstruction-1; i++) {
         program[i] = program[i+1];
     }
+    if (currentInstruction == lastInstruction) {
+        currentInstruction--;
+    }
     lastInstruction--;
     program_display();
     return true;
@@ -114,16 +117,16 @@ void program_nextInstruction() {
     }
     switch(program[currentInstruction]) {
         case CHAR_UP:
-            move_start(0, 0, FORWARD_STEPS);
+            move_forward();
         break;
         case CHAR_DOWN:
-            move_start(1, 1, FORWARD_STEPS);
+            move_backward();
         break;
         case CHAR_LEFT:
-            move_start(1, 0, TURN_STEPS);
+            move_left();
         break;
         case CHAR_RIGHT:
-            move_start(0, 1, TURN_STEPS);
+            move_right();
         break;
     }
     currentInstruction++;

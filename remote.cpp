@@ -28,11 +28,11 @@ void remoteIR_Setup() {
 enum { REMOTE_NONE, REMOTE_WAIT_HIGH, REMOTE_WAIT_LOW,  REMOTE_WAIT_TRAIL, REMOTE_END } remoteState = REMOTE_NONE;
 
 // 0 = waiting for prefix, 1<<(IR_PROTO_FRAME_LEN-1) -> 1 = waiting next bit
-volatile unsigned long remoteMask = 0;
-volatile unsigned long remoteMaskBit = 0;
-volatile unsigned long remoteValue= 0;
+static volatile unsigned long remoteMask = 0;
+static volatile unsigned long remoteMaskBit = 0;
+static volatile unsigned long remoteValue= 0;
 
-volatile unsigned long remoteTimeout = 0;
+static volatile unsigned long remoteTimeout = 0;
 
 unsigned long remoteIR_check() {
     if (remoteState == REMOTE_END) {
@@ -57,7 +57,7 @@ unsigned long remoteIR_check() {
     return 0;
 }
 
-volatile unsigned long timeLow, timeHigh;
+static volatile unsigned long timeLow, timeHigh;
 
 void remoteInterruptHandler() {
     byte state = digitalRead(REMOTE_INPUT);
