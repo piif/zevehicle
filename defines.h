@@ -20,18 +20,9 @@
 #define STEPPER_RIGHT_C  A1
 #define STEPPER_RIGHT_D  A2
 
-// on lego prototype :
-// 51 steps to move forward/backward 5cm
-// 76 steps to turn a quarter
-// speed 20 a bit slow, but with speed 10 first steps are weird
-// -> TODO start  at 20 and continue at 10 after some steps, then slow back to 20 before last steps ?
-
-#define TURN_STEPS 86    // for a quarter turn
-#define FORWARD_STEPS 51 // for 5cm
-
 // delay between steps (ms) at startup and before last steps (NOT YET IMPLEMENTED)
 #define LOW_SPEED 30
-#define LOW_SPEED_STEPS 5
+#define LOW_SPEED_STEPS 12
 // delay between steps (ms)
 #define HIGH_SPEED  20
 
