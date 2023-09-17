@@ -10,15 +10,15 @@
 #define ENABLE_STEPPERS A5
 
 // pinout for stepper motors
-#define STEPPER_LEFT_A   13
-#define STEPPER_LEFT_B   12  
+#define STEPPER_LEFT_A   12
+#define STEPPER_LEFT_B    3  
 #define STEPPER_LEFT_C   11
-#define STEPPER_LEFT_D    3
+#define STEPPER_LEFT_D   13
 
 #define STEPPER_RIGHT_A  A4
 #define STEPPER_RIGHT_B  A3
-#define STEPPER_RIGHT_C  A2
-#define STEPPER_RIGHT_D  A1
+#define STEPPER_RIGHT_C  A1
+#define STEPPER_RIGHT_D  A2
 
 // on lego prototype :
 // 51 steps to move forward/backward 5cm
