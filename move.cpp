@@ -4,14 +4,17 @@
 #include "move.h"
 #include "stepper.h"
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
 static Stepper left = {
     { STEPPER_LEFT_A, STEPPER_LEFT_B, STEPPER_LEFT_C, STEPPER_LEFT_D },
-    0, LEFT_MODE_HALF, 0
+    LEFT_MODE
 };
 static Stepper right = {
     { STEPPER_RIGHT_A, STEPPER_RIGHT_B, STEPPER_RIGHT_C, STEPPER_RIGHT_D },
-    0, RIGHT_MODE_HALF, 0
+    RIGHT_MODE  
 };
+#pragma GCC diagnostic pop
 
 static int currentStep, nbSteps;
 

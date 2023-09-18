@@ -21,17 +21,17 @@
 #define STEPPER_RIGHT_D  A2
 
 // delay between steps (ms) at startup and before last steps (NOT YET IMPLEMENTED)
-#define LOW_SPEED 30
+#define LOW_SPEED 10
 #define LOW_SPEED_STEPS 12
 // delay between steps (ms)
-#define HIGH_SPEED  20
+#define HIGH_SPEED  5
 
 // left motor is 48 steps, right one is 96 steps
 // -> by setting left motor on half steps, wheels are 96 steps per rotation
 // todo : try to use micro steps instead (4th and 8th steps) to have smooth movement ?
 
-#define LEFT_MODE_HALF  1
-#define RIGHT_MODE_HALF 0
+#define LEFT_MODE  StepperHalfSlow
+#define RIGHT_MODE StepperHalf
 
 // REMOTE_SETUP
 // **************
